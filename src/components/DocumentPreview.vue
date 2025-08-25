@@ -10,8 +10,18 @@
       <template v-else>
         <div class="flex gap-[60px] bg-white p-5 rounded-xl shadow-md" :key="doc.id">
           <div class="w-[424px] h-[286px] rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
-            <img v-if="doc.image" :src="doc.image" alt="Нет изображения" class="w-full h-full object-cover" />
-            <div v-else class="text-gray-400">Нет изображения</div>
+            <img
+              v-if="doc.image"
+              :src="doc.image"
+              alt="Изображение документа"
+              class="w-full h-full object-cover"
+            />
+            <img
+              v-else
+              src="/no-image.png"
+              alt="Нет изображения"
+              class="w-full h-full object-cover"
+            />
           </div>
 
           <div class="flex-1 flex flex-col gap-3">
@@ -45,7 +55,7 @@
             <div>
               <h3 class="text-lg font-medium mt-4">Описание:</h3>
               <p
-                class="mt-1 bg-[#6C757D] text-white px-3 py-2 rounded
+                class="mt-1 text-[#6C757D] text-white px-3 py-2 rounded
                        font-[Montserrat] font-normal text-[14px] leading-[100%] tracking-[0px]
                        whitespace-pre-wrap break-words"
               >
