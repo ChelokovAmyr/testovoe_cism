@@ -1,7 +1,7 @@
 <template>
   <aside class="sidebar">
     <div class="sidebar__head">
-      <h3>Документы</h3>
+      <h3>Поиск документа</h3>
       <input
         v-model="query"
         @input="onInput"

@@ -23,6 +23,7 @@
         </div>
 
         <div class="content">
+           <h2 class="title">Описание:</h2>
           <span>{{ doc.description }}</span>
         </div>
       </div>
@@ -75,7 +76,7 @@ const onDelete = async () => {
 
 .card {
   display:flex;
-  gap: 20px;
+  gap: 61px;
   background: var(--card);
   padding: 18px;
   border-radius: 12px;
@@ -83,8 +84,8 @@ const onDelete = async () => {
 }
 
 .media {
-  width: 240px;
-  height: 240px;
+  width: 424px;
+  height: 286px;
   border-radius: 8px;
   background: #fafafa;
   display:flex;

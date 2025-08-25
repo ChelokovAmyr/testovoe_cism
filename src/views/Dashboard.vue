@@ -33,7 +33,6 @@ const store = useDocumentsStore()
 .main-area {
   flex: 1;
   padding: 20px;
-  background: var(--bg);
   overflow: auto;
 }
 
