@@ -2,8 +2,16 @@
   <div class="doc-item" :class="{ active }" @click="$emit('select', doc.id)">
     <div class="left">
       <div class="thumb">
-        <img v-if="doc.image" :src="doc.image" alt="" />
-        <div v-else class="no-thumb">📄</div>
+        <img
+          v-if="doc.image"
+          :src="doc.image"
+          alt="Документ"
+        />
+        <img
+          v-else
+          src="/images/no-image.png"
+          alt="Нет изображения"
+        />
       </div>
     </div>
     <div class="right">

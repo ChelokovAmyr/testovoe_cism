@@ -18,7 +18,7 @@
             />
             <img
               v-else
-              src="/no-image.png"
+              src="/images/no-image.png"
               alt="Нет изображения"
               class="w-full h-full object-cover"
             />
