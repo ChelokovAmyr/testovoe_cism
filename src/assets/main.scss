@@ -1,15 +1,28 @@
-@media (max-width: 768px) {
-  .dashboard {
-    flex-direction: column;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-  .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #ddd;
-  }
+:root {
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --accent: #007bff;
+  --danger: #ff4d4d;
+}
 
-  .preview {
-    padding: 10px;
-  }
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background: var(--bg);
+  color: #222;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* небольшие утилиты */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
 }

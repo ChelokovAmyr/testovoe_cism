@@ -1,128 +1,119 @@
 <template>
   <section class="preview">
-    <div v-if="!document" class="empty">
-      Выберите документ, чтобы посмотреть его содержимое
-    </div>
+    <div v-if="!doc" class="empty">Выберите документ, чтобы посмотреть его содержимое</div>
 
-    <div v-else class="content">
-      <div class="image">
-        <img v-if="document.image" :src="document.image" alt="preview" />
-        <div v-else class="placeholder">Нет изображения</div>
+    <div v-else class="card">
+      <div class="media">
+        <img v-if="doc.image" :src="doc.image" alt="preview" />
+        <div v-else class="no-image">Нет изображения</div>
       </div>
 
-      <div class="info">
-        <h3>{{ document.title }}</h3>
+      <div class="body">
+        <h2 class="title">{{ doc.name }}</h2>
 
-        <div class="buttons">
-          <button class="download" @click="download">Скачать</button>
+        <div class="controls">
+          <button class="btn download" @click="download">Скачать</button>
           <button
-            class="delete"
-            :disabled="!document.image"
-            @click="$emit('delete', document)"
+            class="btn delete"
+            :disabled="!doc.image"
+            @click="onDelete"
           >
             Удалить
           </button>
         </div>
 
-        <p class="description">
-          {{ document.content }}
-        </p>
+        <div class="content">
+          <pre>{{ doc.description }}</pre>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
-import type { Document } from '../stores/documentStore'
+import { computed } from 'vue'
+import { useDocumentsStore, type Doc } from '../stores/documents'
 
-const props = defineProps<{ document: Document | null }>()
+const store = useDocumentsStore()
+const doc = computed<Doc | null>(() => store.selected)
 
 const download = () => {
-  if (!props.document) return
-  const blob = new Blob([props.document.content], { type: 'text/plain' })
+  if (!doc.value) return
+  const filename = `${sanitizeFilename(doc.value.title || 'document')}.txt`
+  const blob = new Blob([doc.value.content ?? ''], { type: 'text/plain;charset=utf-8' })
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
-  link.download = `${props.document.title}.txt`
+  link.download = filename
   link.click()
+  URL.revokeObjectURL(link.href)
+}
+
+const sanitizeFilename = (s: string) => s.replace(/[<>:"/\\|?*\x00-\x1F]/g, '-').slice(0, 200)
+
+const onDelete = async () => {
+  if (!doc.value) return
+  const ok = confirm('Удалить документ?')
+  if (!ok) return
+  await store.deleteDocument(doc.value.id)
 }
 </script>
 
 <style scoped lang="scss">
 .preview {
-  flex: 1;
+  flex:1;
   padding: 20px;
+  overflow: auto;
 }
 
 .empty {
-  color: #999;
-  font-size: 16px;
-  text-align: center;
-  margin-top: 50px;
+  height: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#777;
 }
 
-.content {
-  display: flex;
+.card {
+  display:flex;
   gap: 20px;
+  background: var(--card);
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(34,34,34,0.04);
 }
 
-.image {
-  width: 180px;
-  height: 180px;
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    max-width: 100%;
-    max-height: 100%;
-  }
-
-  .placeholder {
-    color: #bbb;
-    font-size: 14px;
-  }
+.media {
+  width: 240px;
+  height: 240px;
+  border-radius: 8px;
+  background: #fafafa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  img { width:100%; height:100%; object-fit:cover; }
+  .no-image { color:#bbb; }
 }
 
-.info {
-  flex: 1;
+.body { flex:1; display:flex; flex-direction:column; gap:12px; }
+.title { margin:0; font-size:20px; }
+.controls { display:flex; gap:8px; }
+.btn {
+  padding: 8px 14px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
+.download { background: var(--accent); color: white; }
+.delete { background: var(--danger); color:white; }
+.delete:disabled { background: #ddd; color: #888; cursor:not-allowed; }
 
-  h3 {
-    margin: 0 0 10px;
-    font-size: 20px;
-  }
-
-  .buttons {
-    margin: 10px 0;
-
-    button {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-
-    .download {
-      background: #007bff;
-      color: #fff;
-    }
-
-    .delete {
-      background: #ff4d4d;
-      color: #fff;
-    }
-
-    .delete:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-  }
-
-  .description {
-    font-size: 14px;
-    color: #333;
-  }
+.content pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin:0;
+  padding-top:8px;
+  color:#333;
 }
 </style>

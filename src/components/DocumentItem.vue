@@ -1,45 +1,61 @@
 <template>
-  <div
-    class="doc-item"
-    :class="{ active }"
-    @click="$emit('select', document)"
-  >
-    <span class="icon">📄</span>
-    <span class="title">{{ document.title }}</span>
+  <div class="doc-item" :class="{ active }" @click="$emit('select', doc.id)">
+    <div class="left">
+      <div class="thumb">
+        <img v-if="doc.image" :src="doc.image" alt="" />
+        <div v-else class="no-thumb">📄</div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="title">{{ doc.name }}</div>
+      <div class="meta">12 МБ</div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
-import type { Document } from '../stores/documentStore'
+import type { Doc } from '../stores/documents'
 
-defineProps<{
-  document: Document
+const props = defineProps<{
+  doc: Doc
   active?: boolean
 }>()
+
+const active = props.active ?? false
 </script>
 
 <style scoped lang="scss">
 .doc-item {
   display: flex;
-  align-items: center;
+  gap: 12px;
   padding: 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background .12s, box-shadow .12s;
   border: 1px solid transparent;
+  align-items: flex-start;
 
-  .icon {
-    margin-right: 10px;
-  }
-
-  &:hover {
-    background: #f7f7f7;
-  }
+    &:hover { background: #fafbff; }
 
   &.active {
-    border-color: #007bff;
+    border-color: var(--accent);
     background: #eef5ff;
+    box-shadow: 0 2px 6px rgba(0,123,255,0.06);
   }
 }
+
+.thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  background: #fff;
+  img { width:100%; height:100%; object-fit:cover; }
+}
+
+.title { font-weight: 600; font-size: 14px; }
+.meta { font-size: 12px; color: #777; margin-top: 4px;}
 </style>
