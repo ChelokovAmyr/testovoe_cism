@@ -23,7 +23,7 @@
         </div>
 
         <div class="content">
-          <pre>{{ doc.description }}</pre>
+          <span>{{ doc.description }}</span>
         </div>
       </div>
     </div>
