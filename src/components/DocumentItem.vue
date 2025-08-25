@@ -8,7 +8,7 @@
     </div>
     <div class="right">
       <div class="title">{{ doc.name }}</div>
-      <div class="meta">12 МБ</div>
+      <div class="meta">{{ doc.size ?? '12МБ' }}</div>
     </div>
   </div>
 </template>
@@ -31,11 +31,13 @@ const active = props.active ?? false
   padding: 10px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background .12s, box-shadow .12s;
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   border: 1px solid transparent;
   align-items: flex-start;
 
-    &:hover { background: #fafbff; }
+  &:hover {
+    background: #fafbff;
+  }
 
   &.active {
     border-color: var(--accent);
@@ -50,12 +52,25 @@ const active = props.active ?? false
   border-radius: 6px;
   overflow: hidden;
   display: flex;
-  align-items:center;
-  justify-content:center;
+  align-items: center;
+  justify-content: center;
   background: #fff;
-  img { width:100%; height:100%; object-fit:cover; }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
-.title { font-weight: 600; font-size: 14px; }
-.meta { font-size: 12px; color: #777; margin-top: 4px;}
+.title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.meta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 4px;
+}
 </style>

@@ -16,34 +16,41 @@
       <div v-if="store.error" class="error">Ошибка: {{ store.error }}</div>
       <div v-else-if="!store.loading && store.documents.length === 0" class="empty">Документы не найдены</div>
 
-      <DocumentItem
-        v-for="d in store.documents"
-        :key="d.id"
-        :doc="d"
-        :active="d.id === store.selected?.id"
-        @select="onSelect"
-      />
+      <transition-group name="fade" tag="div" class="doc-list">
+        <DocumentItem
+          v-for="d in store.documents"
+          :key="d.id"
+          :doc="d"
+          :active="d.id === store.selected?.id"
+          @select="onSelect"
+        />
+      </transition-group>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import DocumentItem from './DocumentItem.vue'
+import DocumentItem from '../components/DocumentItem.vue'
 import { useDocumentsStore } from '../stores/documents'
 
 const store = useDocumentsStore()
 const query = ref('')
 
-let timer: number | undefined
-const DEBOUNCE_MS = 450
-
-const onInput = () => {
-  if (timer) clearTimeout(timer)
-  timer = window.setTimeout(() => {
-    store.fetchDocuments(query.value || undefined)
-  }, DEBOUNCE_MS)
+// Дебаунс функция
+function debounce<T extends (...args: any[]) => any>(fn: T, delay = 450) {
+  let timeout: ReturnType<typeof setTimeout>
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => fn(...args), delay)
+  }
 }
+
+const fetchDebounced = debounce((value: string) => {
+  store.fetchDocuments(value || undefined)
+})
+
+const onInput = () => fetchDebounced(query.value)
 
 const onSelect = (id: number) => {
   store.selectDocumentById(id)
@@ -75,7 +82,9 @@ onMounted(() => {
     border-radius: 8px;
     border: 1px solid #ddd;
     width: 100%;
+    transition: border-color 0.2s ease;
   }
+  .search:focus { border-color: var(--accent); outline: none; }
 }
 
 .sidebar__list {
@@ -84,6 +93,22 @@ onMounted(() => {
   flex-direction:column;
   gap:8px;
   padding-bottom: 16px;
+}
+
+.doc-list > * {
+  transition: all 0.3s ease;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .empty { color:#666; padding: 10px; text-align:center; }

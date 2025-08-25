@@ -40,8 +40,8 @@ const doc = computed<Doc | null>(() => store.selected)
 
 const download = () => {
   if (!doc.value) return
-  const filename = `${sanitizeFilename(doc.value.title || 'document')}.txt`
-  const blob = new Blob([doc.value.content ?? ''], { type: 'text/plain;charset=utf-8' })
+  const filename = `${sanitizeFilename(doc.value.name || 'document')}.txt`
+  const blob = new Blob([doc.value.description ?? ''], { type: 'text/plain;charset=utf-8' })
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
   link.download = filename
@@ -110,11 +110,9 @@ const onDelete = async () => {
 .delete { background: var(--danger); color:white; }
 .delete:disabled { background: #ddd; color: #888; cursor:not-allowed; }
 
-.content pre {
+.content span {
   white-space: pre-wrap;
   word-break: break-word;
-  margin:0;
-  padding-top:8px;
   color:#333;
 }
 </style>

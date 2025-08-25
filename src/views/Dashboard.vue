@@ -36,7 +36,6 @@ const store = useDocumentsStore()
   overflow: auto;
 }
 
-/* простой toast ошибки */
 .error-toast {
   position: fixed;
   bottom: 18px;

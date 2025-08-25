@@ -1,15 +1,26 @@
 <template>
-  <div v-if="visible" class="loader-overlay">
-    <div class="spinner" />
-  </div>
+  <transition name="fade">
+    <div v-if="visible" class="loader-overlay">
+      <div class="spinner" />
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
-const props = defineProps<{ visible: boolean }>()
+const { visible } = defineProps<{ visible: boolean }>()
 </script>
 
 <style scoped lang="scss">
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
+}
+
 .loader-overlay {
   position: fixed;
   inset: 0;
