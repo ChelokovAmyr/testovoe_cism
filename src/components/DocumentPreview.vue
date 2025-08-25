@@ -1,35 +1,53 @@
 <template>
-  <section class="preview">
-    <div v-if="!doc" class="empty">Выберите документ, чтобы посмотреть его содержимое</div>
-
-    <div v-else class="card">
-      <div class="media">
-        <img v-if="doc.image" :src="doc.image" alt="preview" />
-        <div v-else class="no-image">Нет изображения</div>
-      </div>
-
-      <div class="body">
-        <h2 class="title">{{ doc.name }}</h2>
-
-        <div class="controls">
-          <button class="btn download" @click="download">Скачать</button>
-          <button
-            class="btn delete"
-            :disabled="!doc.image"
-            @click="onDelete"
-          >
-            Удалить
-          </button>
+  <section class="flex-1 p-5 overflow-auto">
+    <transition name="fade" mode="out-in">
+      <template v-if="!doc">
+        <div class="h-full flex items-center justify-center text-gray-500">
+          Выберите документ, чтобы посмотреть его содержимое
         </div>
+      </template>
 
-        <div class="content">
-           <h2 class="title">Описание:</h2>
-          <span>{{ doc.description }}</span>
+      <template v-else>
+        <div class="flex gap-[60px] bg-white p-5 rounded-xl shadow-md" :key="doc.id">
+          <!-- Медиа -->
+          <div class="w-[424px] h-[286px] rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+            <img v-if="doc.image" :src="doc.image" alt="Нет изображения" class="w-full h-full object-cover" />
+            <div v-else class="text-gray-400">Нет изображения</div>
+          </div>
+
+          <!-- Содержимое -->
+          <div class="flex-1 flex flex-col gap-3">
+            <h2 class="text-xl font-semibold">{{ doc.name }}</h2>
+
+            <div class="flex gap-2">
+              <button
+                @click="download"
+                class="px-4 py-2 rounded border border-blue-500 text-blue-500
+                    hover:bg-blue-50 active:bg-blue-100 transition-colors duration-150"
+                >
+                    Скачать
+             </button>
+
+              <button
+                @click="onDelete"
+                :disabled="!doc.image"
+                class="px-4 py-2 rounded border border-red-500 text-red-500 hover:bg-red-50 active:bg-red-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed transition"
+              >
+                Удалить
+              </button>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mt-4">Описание:</h3>
+              <p class="whitespace-pre-wrap break-words text-gray-700 mt-1">{{ doc.description }}</p>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </transition>
   </section>
 </template>
+
 
 <script setup lang="ts">
 import { computed } from 'vue'
@@ -38,6 +56,7 @@ import { useDocumentsStore, type Doc } from '../stores/documents'
 const store = useDocumentsStore()
 const doc = computed<Doc | null>(() => store.selected)
 
+// Скачать документ
 const download = () => {
   if (!doc.value) return
   const filename = `${sanitizeFilename(doc.value.name || 'document')}.txt`
@@ -51,6 +70,7 @@ const download = () => {
 
 const sanitizeFilename = (s: string) => s.replace(/[<>:"/\\|?*\x00-\x1F]/g, '-').slice(0, 200)
 
+// Удаление документа
 const onDelete = async () => {
   if (!doc.value) return
   const ok = confirm('Удалить документ?')
@@ -59,60 +79,9 @@ const onDelete = async () => {
 }
 </script>
 
-<style scoped lang="scss">
-.preview {
-  flex:1;
-  padding: 20px;
-  overflow: auto;
-}
-
-.empty {
-  height: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#777;
-}
-
-.card {
-  display:flex;
-  gap: 61px;
-  background: var(--card);
-  padding: 18px;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(34,34,34,0.04);
-}
-
-.media {
-  width: 424px;
-  height: 286px;
-  border-radius: 8px;
-  background: #fafafa;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  img { width:100%; height:100%; object-fit:cover; }
-  .no-image { color:#bbb; }
-}
-
-.body { flex:1; display:flex; flex-direction:column; gap:12px; }
-.title { margin:0; font-size:20px; }
-.controls { display:flex; gap:8px; }
-.btn {
-  padding: 8px 14px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
-  font-weight:600;
-}
-.download { background: var(--accent); color: white; }
-.delete { background: var(--danger); color:white; }
-.delete:disabled { background: #ddd; color: #888; cursor:not-allowed; }
-
-.content span {
-  white-space: pre-wrap;
-  word-break: break-word;
-  color:#333;
-}
+<style scoped>
+/* Плавный fade для смены документа */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-to, .fade-leave-from { opacity: 1; }
 </style>
